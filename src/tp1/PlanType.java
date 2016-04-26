@@ -96,7 +96,7 @@ public class PlanType {
         System.out.println("Plano cadastrado com código: "+newPlanType.getCode());
     }
     
-    public static void alterar() {
+    public static void update() {
         System.out.println("Digite o código do plano a ser alterado:");
         int code = input.nextInt();
         
@@ -133,6 +133,23 @@ public class PlanType {
         System.out.println("Plano alterado com sucesso!");
         System.out.println(newPlanType.toString());        
     }
+
+    public static void list(){
+        for(int x=0;x<(types.length-1);x++){
+            System.out.println(types[x].toString());
+        }
+    }
+
+    public static void search(){
+        System.out.println("Digite o codigo do plano");
+        int code = input.nextInt();
+        for(int x=0; x < (types.length-1); x++){
+            if(types[x].getCode() == code){
+                System.out.println(types[x].toString());
+            }
+        }
+    }
+
 
     @Override
     public String toString() {
