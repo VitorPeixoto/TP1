@@ -1,7 +1,9 @@
 package tp1;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -18,53 +20,21 @@ public class PlanType {
     private static PlanType[] types = new PlanType[1];
     private static int actualCode = -1;
     private static Scanner input = new Scanner(System.in);
-    
-    public PlanType() {
+
+    static {
+        input.useDelimiter(Pattern.compile("[\\n;]"));
+    }
+
+    private PlanType() {
         this.code  = generateCode();
     }     
 
-    public PlanType(String description, double monthlyValue, double callPrice, int allowance) {
+    private PlanType(String description, double monthlyValue, double callPrice, int allowance) {
         this.code         = generateCode();        
         this.description  = description;
         this.monthlyValue = monthlyValue;
         this.callPrice    = callPrice;
         this.allowance    = allowance;        
-    }    
-    
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public double getMonthlyValue() {
-        return monthlyValue;
-    }
-
-    public void setMonthlyValue(double monthlyValue) {
-        this.monthlyValue = monthlyValue;
-    }
-
-    public double getCallPrice() {
-        return callPrice;
-    }
-
-    public void setCallPrice(double callPrice) {
-        this.callPrice = callPrice;
-    }
-
-    public int getAllowance() {
-        return allowance;
-    }
-
-    public void setAllowance(int allowance) {
-        this.allowance = allowance;
-    }
-
-    public int getCode() {
-        return code;
     }
     
     private int generateCode() {
@@ -95,7 +65,7 @@ public class PlanType {
         
         System.out.println("Plano cadastrado com código: "+newPlanType.getCode());
     }
-    
+
     public static void update() {
         System.out.println("Digite o código do plano a ser alterado:");
         int code = input.nextInt();
@@ -135,7 +105,7 @@ public class PlanType {
     }
 
     public static void list(){
-        for(int x=0;x<(types.length-1);x++){
+        for(int x = 0; x < (types.length-1); x++){
             System.out.println(types[x].toString());
         }
     }
@@ -150,10 +120,93 @@ public class PlanType {
         }
     }
 
+    public static void exclude() {
+        System.out.println("Digite o código do plano a ser excluído: ");
+        int code = input.nextInt();
+        int typeIndex = -1;
+        PlanType type = null;
+
+        for (int x = 0; x < (types.length-1); x++) {
+            if(types[x].getCode() == code) {
+                type = types[x];
+                typeIndex = x;
+            }
+        }
+        if(type == null) {
+            System.out.println("Este tipo de plano não está cadastrado.");
+            return;
+        }
+
+        TelephoneNumber[] numbers = TelephoneNumber.getNumbers();
+        for(int x = 0; x < (numbers.length-1); x++) {
+            if(numbers[x].getType().getCode() == code) {
+                System.out.println("Este plano está associado ao número "+numbers[x].getNumber()+".");
+                return;
+            }
+        }
+
+        if(JOptionPane.showConfirmDialog(null, "Deseja mesmo apagar este plano?") == 0) {
+            types[typeIndex] = null;
+            reshapeTypes();
+        }
+    }
+
+    private static void reshapeTypes() {
+        for(int x = 0; x < (types.length-1); x++) {
+            if(types[x] == null) {
+                for (int y = x; y < (types.length-1); y++) {
+                    types[y] = types[y+1];
+                }
+            }
+        }
+        types = Arrays.copyOf(types, (types.length-1));
+    }
 
     @Override
     public String toString() {
         return "\nTipo de plano "+code+":\nDescrição: "+ description+".\nValor Mensal: "+monthlyValue+".\nPreço da Ligação: "+callPrice+".\nFranquia: "+allowance+".";
     }
-        
+
+  /********************************************************************************************
+   * Getters and setters                                                                      *
+   ********************************************************************************************/
+    public static PlanType[] getTypes() {
+        return types;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getMonthlyValue() {
+        return monthlyValue;
+    }
+
+    public void setMonthlyValue(double monthlyValue) {
+        this.monthlyValue = monthlyValue;
+    }
+
+    public double getCallPrice() {
+        return callPrice;
+    }
+
+    public void setCallPrice(double callPrice) {
+        this.callPrice = callPrice;
+    }
+
+    public int getAllowance() {
+        return allowance;
+    }
+
+    public void setAllowance(int allowance) {
+        this.allowance = allowance;
+    }
+
+    public int getCode() {
+        return code;
+    }
 }
