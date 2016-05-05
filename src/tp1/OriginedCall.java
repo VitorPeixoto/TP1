@@ -10,8 +10,9 @@ import java.util.regex.Pattern;
  * Created by Peixoto on 04/05/2016.
  */
 public class OriginedCall {
-    private TelephoneNumber originNumber,
-                            destinationNumber;
+    private TelephoneNumber originNumber;//,
+    //                        destinationNumber;
+    private String destinationNumber;
 
     private Date callBegin,
                  callEnd;
@@ -23,7 +24,8 @@ public class OriginedCall {
         input.useDelimiter(Pattern.compile("[\\n;]"));
     }
 
-    private OriginedCall(TelephoneNumber originNumber, TelephoneNumber destinationNumber, Date callBegin, Date callEnd) {
+    //private OriginedCall(TelephoneNumber originNumber, TelephoneNumber destinationNumber, Date callBegin, Date callEnd) {
+    private OriginedCall(TelephoneNumber originNumber, String destinationNumber, Date callBegin, Date callEnd) {
         this.originNumber      = originNumber;
         this.destinationNumber = destinationNumber;
         this.callBegin         = callBegin;
@@ -32,12 +34,14 @@ public class OriginedCall {
 
     public static void register() {
         //Lendo a data de início
-        System.out.println("Digite a data de inicio da chamada (MM/DD/AA 00:00:00):");
-        Date callBeginDate = new Date(input.next());
+        System.out.println("Digite a data de inicio da chamada (DD/MM/AAAA 00:00:00):");
+        String brazilianFormat = input.next();
+        Date callBeginDate = new Date(brazilianToAmerican(brazilianFormat));
 
         //Lendo a data de fim
-        System.out.println("Digite a data de término da chamada (MM/DD/AA 00:00:00):");
-        Date callEndDate = new Date(input.next());
+        System.out.println("Digite a data de término da chamada (DD/MM/AAAA 00:00:00):");
+        brazilianFormat = input.next();
+        Date callEndDate = new Date(brazilianToAmerican(brazilianFormat));
         if(callBeginDate.compareTo(callEndDate) > 0) {
             System.out.println("A data de início deve ser antes da data de término.");
             return;
@@ -69,7 +73,7 @@ public class OriginedCall {
         String newDestinationNumber = input.next();
         TelephoneNumber destinationNumber = null;
 
-        for(int x = 0; x < (numbers.length-1); x++){
+        /*for(int x = 0; x < (numbers.length-1); x++){
             if(numbers[x].getNumber().equals(newDestinationNumber)){
                 destinationNumber = numbers[x];
             }
@@ -82,9 +86,10 @@ public class OriginedCall {
             if(originNumber.getCancelationDate().compareTo(callEndDate) > 0) {
                 System.out.println("A data de fim da chamada não pode ser após o cancelamento.");
             }
-        }
+        }*/
 
-        OriginedCall newCall = new OriginedCall(originNumber, destinationNumber, callBeginDate, callEndDate);
+        //OriginedCall newCall = new OriginedCall(originNumber, destinationNumber, callBeginDate, callEndDate);
+        OriginedCall newCall = new OriginedCall(originNumber, newDestinationNumber, callBeginDate, callEndDate);
         addInCalls(newCall);
         System.out.println("Chamada cadastrada com sucesso!");
     }
@@ -116,9 +121,9 @@ public class OriginedCall {
         int callsIndex = -1;
         OriginedCall originCall = null;
 
-        System.out.println("Digite a data de origem da chamada a ser excluída (MM/DD/AA 00:00:00): ");
+        System.out.println("Digite a data de origem da chamada a ser excluída (DD/MM/AAAA 00:00:00): ");
         String originDateString = input.next();
-        Date originDate = new Date(originDateString);
+        Date originDate = new Date(brazilianToAmerican(originDateString));
 
         for (int x = 0; x < (calls.length-1); x++) {
             if(calls[x].getOriginNumber().getNumber().equals(originNumber) &&
@@ -135,6 +140,7 @@ public class OriginedCall {
         if(JOptionPane.showConfirmDialog(null, "Deseja mesmo apagar essa ligação ?") == 0) {
             calls[callsIndex] = null;
             reshapeCalls();
+            System.out.println("Ligação excluida com sucesso.");
         }
     }
 
@@ -151,11 +157,16 @@ public class OriginedCall {
 
     @Override
     public String toString() {
-        return "\nChamada para " + destinationNumber.getNumber() + ":\nData de início: " + callBegin.toString() + ".\nData de fim: " + callEnd.toString() +".";
+        //return "\nChamada de "+originNumber.getNumber() +":\nDestino: "+destinationNumber.getNumber()+".\nData de início: " + callBegin.toString() + ".\nData de fim: " + callEnd.toString() +".";
+        return "\nChamada de "+originNumber.getNumber() +":\nDestino: "+destinationNumber+".\nData de início: " + callBegin.toString() + ".\nData de fim: " + callEnd.toString() +".";
     }
   /********************************************************************************************
    * Getters and setters                                                                      *
    ********************************************************************************************/
+    /*public String getDuration () {
+        Date duration = callEnd.getTime();
+    }*/
+
     public TelephoneNumber getOriginNumber() {
         return originNumber;
     }
@@ -164,11 +175,13 @@ public class OriginedCall {
         this.originNumber = originNumber;
     }
 
-    public TelephoneNumber getDestinationNumber() {
+    //public TelephoneNumber getDestinationNumber() {
+    public String getDestinationNumber() {
         return destinationNumber;
     }
 
-    public void setDestinationNumber(TelephoneNumber destinationNumber) {
+    //public void setDestinationNumber(TelephoneNumber destinationNumber) {
+    public void setDestinationNumber(String destinationNumber) {
         this.destinationNumber = destinationNumber;
     }
 
@@ -194,5 +207,9 @@ public class OriginedCall {
 
     public static void setCalls(OriginedCall[] calls) {
         OriginedCall.calls = calls;
+    }
+
+    public static String brazilianToAmerican(String brasilianFormatedString) {
+        return brasilianFormatedString.substring(3, 5) + "/" + brasilianFormatedString.substring(0, 2) + "/" + brasilianFormatedString.substring(6, brasilianFormatedString.length());
     }
 }

@@ -148,6 +148,7 @@ public class PlanType {
         if(JOptionPane.showConfirmDialog(null, "Deseja mesmo apagar este plano?") == 0) {
             types[typeIndex] = null;
             reshapeTypes();
+            System.out.println("Tipo de plano excluído com sucesso!");
         }
     }
 

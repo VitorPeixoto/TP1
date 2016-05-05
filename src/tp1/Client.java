@@ -100,7 +100,7 @@ public class Client {
         System.out.println("Digite o CPF do cliente: ");
         String CPF = input.next();
         for(int x=0; x < (clients.length-1); x++){
-            if(clients[x].getCPF() == CPF){
+            if(clients[x].getCPF().equals(CPF)){
                 System.out.println(clients[x].toString());
             }
         }

@@ -68,7 +68,7 @@ public class TelephoneNumber {
             return;
         }
 
-        System.out.println("Digite o CPF do cliente a ser alterado");
+        System.out.println("Digite o CPF do cliente da linha: ");
         String newCpf = input.next();
         Client [] clients = Client.getClients();
         Client client = null;
@@ -79,23 +79,23 @@ public class TelephoneNumber {
         }
 
         if(client == null ){
-            System.out.println("Cliente nao cadastraado");
+            System.out.println("Cliente nao cadastrado");
             return;
         }
-        System.out.println("Digite a data de ativaçao no formato MM/DD/AA 00:00:00");
+        System.out.println("Digite a data de ativaçao no formato DD/MM/AAAA 00:00:00");
         String activation = input.next();
-        Date activationDate = new Date(activation);
+        Date activationDate = new Date(OriginedCall.brazilianToAmerican(activation));
         //System.out.println(d.toString());
         /*try {
             Date d = DateFormat.getInstance().parse("10/04/1997 00:00:00");
         } catch (ParseException e) {
             e.printStackTrace();
         }*/
-        System.out.println("Digite a data de cancelamento no formato MM/DD/AA 00:00:00 (-1 para pular)");
+        System.out.println("Digite a data de cancelamento no formato DD/MM/AAAA 00:00:00 (-1 para pular)");
         String cancelation =  input.next();
         Date cancelationDate = null;
         if(!cancelation.equals("-1")) {
-            cancelationDate = new Date(cancelation);
+            cancelationDate = new Date(OriginedCall.brazilianToAmerican(cancelation));
         }
         System.out.println("Digite o dia do pagamento (1, 5, 10 ou 15):");
         int newPayday = input.nextInt();
@@ -105,6 +105,7 @@ public class TelephoneNumber {
         }
         TelephoneNumber newNumber = new TelephoneNumber(newTel,client,type,activationDate,cancelationDate,newPayday);
         addInNumbers(newNumber);
+        System.out.println("Numero cadastrado com sucesso");
 
     }
 
@@ -163,7 +164,7 @@ public class TelephoneNumber {
         if(!newCPF.equals("-1")) telephoneNumber.setClient(client);
         if(newCode !=-1) telephoneNumber.setType(planType);
         if(newPayDay != -1) telephoneNumber.setPayDay(newPayDay);
-
+        System.out.println("Telefone alterado com sucesso.");
     }
 
     public static void cancelNumber(){
@@ -179,9 +180,9 @@ public class TelephoneNumber {
             System.out.println("Esse telefone nao esta cadastrado");
             return;
         }
-        System.out.println("Digite a data de cancelamento no formato MM/DD/AA 00:00:00");
+        System.out.println("Digite a data de cancelamento no formato DD/MM/AAAA 00:00:00");
         String newCancelation = input.next();
-        Date cancelation = new Date(newCancelation);
+        Date cancelation = new Date(OriginedCall.brazilianToAmerican(newCancelation));
         if(cancelation.compareTo(tel.getActivationDate()) <= 0){
             System.out.println("A data de cancelamento deve ser depois da data de ativação.");
             return;
@@ -230,6 +231,7 @@ public class TelephoneNumber {
         if(JOptionPane.showConfirmDialog(null, "Deseja mesmo apagar este núemro?") == 0) {
             numbers[numbersIndex] = null;
             reshapeNumbers();
+            System.out.println("Numero excluido com sucesso.");
         }
     }
 
